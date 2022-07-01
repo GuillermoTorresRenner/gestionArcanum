@@ -1,0 +1,12 @@
+{
+  "name": "arcanum",
+  "version": "0.0.1",
+  "description": "Sistema de gestión de cervecería artesanal",
+  "author": "Guille <torresrennerguillerm@gmail.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^2.5.0",
+    "@capacitor/cli": "^2.0.0",
+    "@capacitor/core": "^2.0.0"
+  }
+}
