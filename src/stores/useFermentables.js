@@ -15,10 +15,12 @@ export const useFermentables = defineStore("fermentables", {
   state: () => ({
     fermentable: {},
     fermentables: [],
+    fermentableEnReceta: {},
   }),
   getters: {
     getFermentable: (state) => state.fermentable,
     getFermentables: (state) => state.fermentables,
+    getFermentableEnReceta: (state) => state.fermentableEnReceta,
   },
   actions: {
     async saveFermentableInDB(ferm) {

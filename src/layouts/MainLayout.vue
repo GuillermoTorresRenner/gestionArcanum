@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated v-if="isAuthenticated">
       <q-toolbar>
         <q-btn
           flat
@@ -12,10 +12,46 @@
         />
 
         <q-toolbar-title> Cervecería Arcanum </q-toolbar-title>
+        <q-btn-dropdown color="white" dropdown-icon="ion-more" flat>
+          <q-list>
+            <q-item clickable v-close-popup @click="onItemClick">
+              <q-item-section>
+                <q-btn
+                  color="white"
+                  icon="ion-person"
+                  @click="onClick"
+                  flat
+                  unelevated
+                  ripple="false"
+                  to="/opciones-usuario"
+                />
+              </q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="onItemClick">
+              <q-item-section>
+                <q-btn
+                  color="white"
+                  icon="ion-settings"
+                  @click="onClick"
+                  flat
+                  unelevated
+                  ripple="false"
+                  to="/configuraciones"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      v-if="isAuthenticated"
+    >
       <q-list>
         <q-item-label header> Opciones</q-item-label>
 
@@ -36,6 +72,8 @@
 <script>
 import { defineComponent, ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { useAuth } from "@vueuse/firebase";
+import { auth } from "src/boot/firebase";
 
 const linksList = [
   {
@@ -98,8 +136,10 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
+    const { isAuthenticated } = useAuth(auth);
 
     return {
+      isAuthenticated,
       essentialLinks: linksList,
       leftDrawerOpen,
       toggleLeftDrawer() {

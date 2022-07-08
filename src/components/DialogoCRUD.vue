@@ -7,7 +7,17 @@
   >
     <q-card class="bg-dark text-white">
       <q-card-section>
-        <div class="text-h6 text-info text-center">Estilo de Cerveza</div>
+        <div class="text-h5 text-info text-center">{{ titulo }}</div>
+        <div class="row justify-center">
+          <q-btn
+            icon="ion-arrow-dropdown-circle"
+            color="grey"
+            flat
+            class="col"
+            @click="cerrarDialogo()"
+            size="xl"
+          />
+        </div>
       </q-card-section>
 
       <q-card-section class="q-pt-none">
@@ -32,4 +42,9 @@
     </q-card>
   </q-dialog>
 </template>
-<script setup></script>
+<script setup>
+const props = defineProps({
+  cerrarDialogo: Function,
+  titulo: String,
+});
+</script>

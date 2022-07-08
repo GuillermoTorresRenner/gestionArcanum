@@ -1,23 +1,23 @@
 <template>
   <q-page class="conainer">
+    <q-page-sticky position="bottom-right" :offset="[18, 18]" expand>
+      <q-btn fab icon="ion-add" color="positive" @click="agregarEstilo" />
+    </q-page-sticky>
+
     <div class="row justify-center">
       <h4 class="text-center text-positive col text-info">Estilos</h4>
     </div>
     <!-- Diálogo Detalle -->
-    <DialogoCRUD v-model="mostrar">
+    <DialogoCRUD
+      v-model="mostrar"
+      titulo="Estilos de Cerveza"
+      :cerrarDialogo="cerrarDialogo"
+    >
       <template #formuario>
-        <div class="row justify-center">
-          <q-btn
-            icon="ion-arrow-dropdown-circle"
-            color="grey"
-            flat
-            class="col"
-            v-close-popup
-            @click="bloqueo = true"
-            size="lg"
-          />
-        </div>
-        <q-form @submit="onSubmit" class="q-gutter-md container">
+        <q-form
+          @submit.prevent="guardarRegistro()"
+          class="q-gutter-md container"
+        >
           <div class="row">
             <q-toggle
               v-model="estilo.verificado"
@@ -36,14 +36,14 @@
               type="text"
               label="Nombre"
               class="col q-mr-md"
-              :disable="bloqueo"
+              :readonly="bloqueo"
             />
             <q-input
               v-model="estilo.categoria"
               type="text"
               label="Categoria"
               class="col"
-              :disable="bloqueo"
+              :readonly="bloqueo"
             />
           </div>
           <div class="row">
@@ -52,7 +52,7 @@
               type="text"
               label="Tipo"
               class="col q-mr-md"
-              :disable="bloqueo"
+              :readonly="bloqueo"
             />
 
             <q-input
@@ -60,14 +60,14 @@
               type="text"
               label="Letra Estilo"
               class="col q-mr-md"
-              :disable="bloqueo"
+              :readonly="bloqueo"
             />
             <q-input
               v-model="estilo.numeroCategoria"
               type="text"
               label="Número Categoría"
               class="col"
-              :disable="bloqueo"
+              :readonly="bloqueo"
             />
           </div>
           <div class="row justify-center">
@@ -129,7 +129,7 @@
               </q-badge>
               <q-range
                 v-model="estilo.color"
-                :min="o"
+                :min="0"
                 :max="100"
                 :step="1"
                 color="warning"
@@ -179,7 +179,7 @@
               v-model="estilo.notas"
               type="textarea"
               label="Notas de Estilo"
-              autogrow="true"
+              autogrow
               class="col"
               :readonly="bloqueo"
             />
@@ -190,7 +190,7 @@
               type="textarea"
               label="Perfil"
               class="col"
-              autogrow="true"
+              autogrow
               :readonly="bloqueo"
             />
           </div>
@@ -202,6 +202,7 @@
               flat
               class="col"
               :disable="bloqueo"
+              size="lg"
             />
             <q-btn
               icon="ion-create"
@@ -209,8 +210,18 @@
               flat
               class="col"
               @click="editar()"
+              v-if="verBotones"
+              size="lg"
             />
-            <q-btn icon="ion-trash" color="negative" flat class="col" />
+            <q-btn
+              icon="ion-trash"
+              color="negative"
+              flat
+              class="col"
+              v-if="verBotones"
+              @click="dialogoEliminar()"
+              size="lg"
+            />
           </div>
         </q-form>
       </template>
@@ -271,13 +282,21 @@ const estilo = ref({
   notas: "",
   perfil: "",
   ingredientes: "",
+  id: "",
 });
-const Estilo = ref("");
+
 const bloqueo = ref(true);
+const verBotones = ref(true);
 
 //Definición de funciones
 function editar() {
   bloqueo.value = false;
+}
+function agregarEstilo() {
+  reset();
+  mostrar.value = true;
+  bloqueo.value = false;
+  verBotones.value = false;
 }
 
 function reset() {
@@ -287,21 +306,17 @@ function reset() {
     categoria: "",
     numeroCategoria: "",
     letraEstilo: "",
-    diMin: 0,
-    diMax: 0,
-    dfMin: 0,
-    dfMax: 0,
-    ibuMin: 0,
-    ibuMax: 0,
-    colorMin: 0,
-    colorMax: 0,
-    abvMin: 0,
-    abvMax: 5,
-    carbMin: 0,
-    carbMax: 0,
+    densidadInicial: { min: 0, max: 0 },
+    densidadFinal: { min: 0, max: 0 },
+    ibu: { min: 0, max: 0 },
+    color: { min: 0, max: 0 },
+    abv: { min: 0, max: 0 },
+    carb: { min: 0, max: 0 },
+    verificado: false,
     notas: "",
     perfil: "",
     ingredientes: "",
+    id: "",
   };
 
   agregar.value = false;
@@ -331,9 +346,41 @@ function seleccionarEstilo(estiloSelected) {
   estilo.value = estiloSelected;
   mostrar.value = true;
 }
+function cerrarDialogo() {
+  mostrar.value = false;
+  bloqueo.value = true;
+  verBotones.value = true;
+}
 const validarBtn = computed(() => {
   return auxiliar.value.nombre !== "" && auxiliar.value.tipo !== ""
     ? false
     : true;
 });
+
+function guardarRegistro() {
+  style.setEstilo(estilo.value);
+  verBotones.value = true;
+  style.saveEstiloInDB(estilo.value);
+  mostrar.value = false;
+  bloqueo.value = true;
+  notificacionPositiva(
+    "Guardado Exitoso",
+    "Se ha guardado el nuevo estilo en la DB"
+  );
+}
+function eliminarRegistro() {
+  style.setEstilo(estilo.value);
+  style.deleteEstiloInDB();
+  mostrar.value = false;
+  bloqueo.value = true;
+  notificacionPositiva(
+    "Eliminación Exitosa",
+    "Se ha eliminado el estilo en la DB"
+  );
+  dialogo.value = false;
+}
+function dialogoEliminar() {
+  dialogo.value.estado = true;
+  dialogo.value.mensaje = `Desea eliminar el estilo ${estilo.value.nombre} de la base de datos?`;
+}
 </script>

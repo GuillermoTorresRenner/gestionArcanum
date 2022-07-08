@@ -25,6 +25,18 @@ const routes = [
         path: "/estilos",
         component: () => import("src/pages/EstilosCervezas.vue"),
       },
+      {
+        path: "/recetas",
+        component: () => import("src/pages/RecetasPersonales.vue"),
+      },
+      {
+        path: "/configuraciones",
+        component: () => import("src/pages/ConfigPersonales.vue"),
+      },
+      {
+        path: "/opciones-usuario",
+        component: () => import("src/pages/OpcionesUsuario.vue"),
+      },
     ],
   },
 

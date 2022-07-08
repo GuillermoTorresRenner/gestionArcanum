@@ -12,7 +12,24 @@ import {
 import { nanoid } from "nanoid";
 export const useEstilos = defineStore("estilos", {
   state: () => ({
-    estilo: {},
+    estilo: {
+      nombre: "",
+      tipo: "",
+      categoria: "",
+      numeroCategoria: "",
+      letraEstilo: "",
+      densidadInicial: { min: 0, max: 0 },
+      densidadFinal: { min: 0, max: 0 },
+      ibu: { min: 0, max: 0 },
+      color: { min: 0, max: 0 },
+      abv: { min: 0, max: 0 },
+      carb: { min: 0, max: 0 },
+      verificado: false,
+      notas: "",
+      perfil: "",
+      ingredientes: "",
+      id: "",
+    },
     estilos: [],
   }),
   getters: {
@@ -56,8 +73,31 @@ export const useEstilos = defineStore("estilos", {
       this.estilo = style;
     },
 
-    getNombreEstilos() {
-      return this.estilos.map((n) => n.nombre);
+    setEstiloByName(nombreEstilo) {
+      if (nombreEstilo !== "") {
+        this.estilo = this.estilos.filter((e) => e.nombre === nombreEstilo)[0];
+      }
+    },
+
+    resetEstilo() {
+      this.estilo = {
+        nombre: "",
+        tipo: "",
+        categoria: "",
+        numeroCategoria: "",
+        letraEstilo: "",
+        densidadInicial: { min: 0, max: 0 },
+        densidadFinal: { min: 0, max: 0 },
+        ibu: { min: 0, max: 0 },
+        color: { min: 0, max: 0 },
+        abv: { min: 0, max: 0 },
+        carb: { min: 0, max: 0 },
+        verificado: false,
+        notas: "",
+        perfil: "",
+        ingredientes: "",
+        id: "",
+      };
     },
   },
 });
