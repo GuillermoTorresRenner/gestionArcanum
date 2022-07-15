@@ -8,7 +8,8 @@
     <q-expansion-item expand-separator icon="workspaces">
       <q-card-section class="row justify-center">
         <strong class="text-center text-green text-h6">
-          IBUs Totales: {{ receta.getReceta.ibuObjetivo }}</strong
+          IBUs: {{ ibuTotal }} IBUS de {{ receta.getReceta.ibuObjetivo }} IBUs
+          Totales</strong
         >
       </q-card-section>
       <q-card-section class="row justify-center items-end">
@@ -42,13 +43,42 @@
                 {{ props.row.porcentajeAA }}
               </q-td>
               <q-td key="formato" :props="props">
-                <div class="text-pre-wrap">{{ props.row.formato }}</div>
-              </q-td>
-              <q-td key="minAgregado" :props="props">
-                {{ props.row.minAgregado }}
+                {{ props.row.formato }}
                 <q-popup-edit
-                  v-model="props.row.porcentajeReceta"
-                  title="% Receta"
+                  v-model="props.row.formato"
+                  title="Formato"
+                  buttons
+                  v-slot="scope"
+                >
+                  <q-select
+                    v-model="scope.value"
+                    :options="['flor', 'pellet']"
+                    label="Formato"
+                    filled
+                  />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="minsHervor" :props="props">
+                {{ props.row.minsHervor }}
+                <q-popup-edit
+                  v-model.number="props.row.minsHervor"
+                  title="Minutos en hervor"
+                  buttons
+                  v-slot="scope"
+                >
+                  <q-input
+                    type="text"
+                    v-model.number="scope.value"
+                    dense
+                    autofocus
+                  />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="aporteIbu" :props="props">
+                {{ props.row.aporteIbu }}
+                <q-popup-edit
+                  v-model="props.row.aporteIbu"
+                  title="Aporte IBU"
                   buttons
                   v-slot="scope"
                 >
@@ -61,13 +91,14 @@
                 </q-popup-edit>
               </q-td>
               <q-td key="cantidad" :props="props">{{
-                // (props.row.cantidad =
-                //   (puntosDensidad /
-                //     (config.getConfig.eficiencia.actual *
-                //       props.row.porcentajeExtraccion *
-                //       3.84)) *
-                //   props.row.porcentajeReceta).toFixed(2)
-                props.row.cantidad
+                (props.row.cantidad = (
+                  (props.row.aporteIbu *
+                    receta.getReceta.volumenBatch *
+                    fc *
+                    10) /
+                  (props.row.porcentajeAA *
+                    porcUtilizacion(props.row.formato, props.row.minsHervor))
+                ).toFixed(1))
               }}</q-td>
               <q-td key="accion" :props="props"
                 ><q-btn
@@ -81,59 +112,123 @@
           </template>
         </q-table>
 
+        <!-- Tabla con los lúpulos en receta -->
         <q-table
-          title="Fermentables en Receta"
-          :rows="receta.getReceta.fermentables"
-          :columns="col2"
-          row-key="nombre"
-          binary-state-sort
+          title="Lúlulos en Receta"
+          :rows="receta.getReceta.lupulos"
+          :columns="col"
+          row-key="name"
+          no-data-label="Sin Lúpulos en la receta"
         >
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td key="nombre" :props="props">
-                {{ props.row.nombre }}
-              </q-td>
-              <q-td key="porcentajeExtraccion" :props="props">
-                {{ props.row.porcentajeExtraccion }}
-              </q-td>
-              <q-td key="color" :props="props">
-                <div class="text-pre-wrap">{{ props.row.color }}</div>
-              </q-td>
-              <q-td key="porcentajeReceta" :props="props">
-                {{ props.row.porcentajeReceta }}
-              </q-td>
-              <q-td key="cantidad" :props="props">{{
-                props.row.cantidad.toFixed(2)
-              }}</q-td>
-              <q-td key="accion" :props="props"
-                ><q-btn
-                  color="negative"
-                  icon="ion-trash"
-                  @click="eliminar(props.row)"
-                  dense
-              /></q-td>
-            </q-tr>
+          <template #body-cell-accion="props">
+            <q-btn
+              color="negative"
+              icon="ion-trash"
+              @click="eliminar(props.row)"
+              dense
+            />
           </template>
         </q-table>
       </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
     </q-expansion-item>
   </q-card>
 </template>
 <script setup>
+import { useQuasar } from "quasar";
 import { tablaListaLupulos } from "src/composables/useTablesColumns";
 import { useLupulos } from "src/stores/useLupulos";
 import { useRecetas } from "src/stores/useRecetas";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+const $q = useQuasar();
 const filter = ref("");
 const lupulo = useLupulos();
 const receta = useRecetas();
 const col = tablaListaLupulos;
+function seleccionar(registro) {
+  if (ibuTotal.value + registro.aporteIbu <= receta.getReceta.ibuObjetivo) {
+    receta.getReceta.lupulos.push(registro);
+  } else {
+    $q.notify({
+      message: `Revisar El aporte de IBU (max) ${
+        receta.getReceta.ibuObjetivo - ibuTotal.value
+      }`,
+      caption: "El IBU final superará el objetivo de la receta",
+      icon: "warning",
+      color: "negative",
+    });
+  }
+}
+function eliminar(registro) {
+  receta.getReceta.lupulos = receta.getReceta.lupulos.filter(
+    (l) => l.id !== registro.id
+  );
+}
+const ibuTotal = computed(() => {
+  let ibu = 0;
+  receta.getReceta.lupulos.forEach((l) => {
+    ibu += l.aporteIbu;
+  });
+
+  return ibu;
+});
+
+const fc = computed(() => {
+  return receta.getReceta.densidadInicialObjetivo > 1050
+    ? 1 + (receta.getReceta.densidadInicialObjetivo / 1000 - 1.05) / 0.2
+    : 1;
+});
+
+function porcUtilizacion(formato, tiempo) {
+  let putil = 0;
+
+  // Fórmula para flores
+  if (formato === "flor" && tiempo >= 0 && tiempo < 10) {
+    putil = 5;
+  }
+  if (formato === "flor" && tiempo >= 10 && tiempo < 20) {
+    putil = 12;
+  }
+  if (formato === "flor" && tiempo >= 20 && tiempo < 30) {
+    putil = 15;
+  }
+  if (formato === "flor" && tiempo >= 30 && tiempo < 45) {
+    putil = 19;
+  }
+  if (formato === "flor" && tiempo >= 45 && tiempo < 60) {
+    putil = 22;
+  }
+  if (formato === "flor" && tiempo >= 60 && tiempo < 75) {
+    putil = 24;
+  }
+  if (formato === "flor" && tiempo >= 75) {
+    putil = 27;
+  }
+  // Formulas para pellet
+  if (formato === "pellet" && tiempo >= 0 && tiempo < 10) {
+    putil = 6;
+  }
+  if (formato === "pellet" && tiempo >= 10 && tiempo < 20) {
+    putil = 15;
+  }
+  if (formato === "pellet" && tiempo >= 20 && tiempo < 30) {
+    putil = 19;
+  }
+  if (formato === "pellet" && tiempo >= 30 && tiempo < 45) {
+    putil = 24;
+  }
+  if (formato === "pellet" && tiempo >= 45 && tiempo < 60) {
+    putil = 27;
+  }
+  if (formato === "pellet" && tiempo >= 60 && tiempo < 75) {
+    putil = 30;
+  }
+  if (formato === "pellet" && tiempo >= 75) {
+    putil = 34;
+  }
+
+  return putil;
+}
 </script>
+<!-- IBU= (aporteIBU*volumenBatch*FC*10)/(%AA*30)
+
+FC= (aplicar si densidad inicial es mayor que 1050 )=1+((densidadInicial/1000)-1.05)/2   en caso  de densidades menores a 1050 fc=1 -->

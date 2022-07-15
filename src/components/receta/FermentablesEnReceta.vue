@@ -95,31 +95,13 @@
           row-key="nombre"
           binary-state-sort
         >
-          <template v-slot:body="props">
-            <q-tr :props="props">
-              <q-td key="nombre" :props="props">
-                {{ props.row.nombre }}
-              </q-td>
-              <q-td key="porcentajeExtraccion" :props="props">
-                {{ props.row.porcentajeExtraccion }}
-              </q-td>
-              <q-td key="color" :props="props">
-                <div class="text-pre-wrap">{{ props.row.color }}</div>
-              </q-td>
-              <q-td key="porcentajeReceta" :props="props">
-                {{ props.row.porcentajeReceta }}
-              </q-td>
-              <q-td key="cantidad" :props="props">{{
-                props.row.cantidad.toFixed(2)
-              }}</q-td>
-              <q-td key="accion" :props="props"
-                ><q-btn
-                  color="negative"
-                  icon="ion-trash"
-                  @click="eliminar(props.row)"
-                  dense
-              /></q-td>
-            </q-tr>
+          <template v-slot:body-cell-accion="props">
+            <q-btn
+              color="negative"
+              icon="ion-trash"
+              @click="eliminar(props.row)"
+              dense
+            />
           </template>
         </q-table>
       </q-card-section>
