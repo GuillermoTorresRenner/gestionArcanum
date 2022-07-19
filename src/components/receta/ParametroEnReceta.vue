@@ -11,6 +11,12 @@
           type="text"
           label="Nombre de Receta"
           class="col"
+          lazy-rules="ondemand"
+          :rules="[
+            (val) =>
+              (val && val.length > 0) || 'Ingrese un nombre para la receta',
+          ]"
+          :readonly="!editar"
         />
       </div>
     </q-card-section>
@@ -20,14 +26,23 @@
       label="Parámetros de Receta"
       :caption="receta.getReceta.nombre"
     >
-      <q-card-section class="row">
-        <q-input
+      <q-card-section class="row items-end">
+        <q-slider
           v-model="receta.getReceta.volumenBatch"
-          type="number"
-          label="Volumen Batch"
-          suffix="Litros"
+          :min="config.getConfig.volumenElaboracion.min"
+          :max="config.getConfig.volumenElaboracion.max"
+          :step="1"
+          label
+          :label-value="receta.getReceta.volumenBatch + 'Litros '"
+          label-always
+          color="primary"
           class="col q-mr-xl"
+          hint="considere 5 L extras por pérdidas de proceso"
+          markers
+          :readonly="!editar"
         />
+
+        <!-- Dato desde configuración General de la app -->
         <q-input
           v-model="config.getConfig.eficiencia.actual"
           type="number"
@@ -39,43 +54,57 @@
         />
       </q-card-section>
 
-      <q-card-section class="row">
-        <q-input
-          v-model.number="receta.getReceta.densidadInicialObjetivo"
-          type="number"
-          label="Densidad Inicial Objetivo"
-          dense
+      <q-card-section class="row items-end q-mt-lg">
+        <q-slider
+          v-model="receta.getReceta.densidadInicialObjetivo"
+          :min="estilo.getEstilo.densidadInicial.min"
+          :max="estilo.getEstilo.densidadInicial.max"
+          :step="1"
+          label
+          :label-value="receta.getReceta.densidadInicialObjetivo + ' DI'"
+          label-always
+          color="info"
           class="col q-mr-xl"
-          :hint="
-            estilo.getEstilo.densidadInicial.min +
-            ' - ' +
-            estilo.getEstilo.densidadInicial.max
-          "
+          :rules="[(val) => (val && val > 0) || 'Ingrese Densidad Inical']"
+          markers
+          :marker-labels="arrayDI"
+          :readonly="!editar"
         />
-        <q-input
-          v-model.number="receta.getReceta.densidadFinalObjetivo"
-          type="number"
-          label="Densidad Final Objetivo"
-          dense
+
+        <q-slider
+          v-model="receta.getReceta.densidadFinalObjetivo"
+          :min="estilo.getEstilo.densidadFinal.min"
+          :max="estilo.getEstilo.densidadFinal.max"
+          :step="1"
+          label
+          :label-value="receta.getReceta.densidadFinalObjetivo + ' DF'"
+          label-always
+          color="info"
           class="col"
-          :hint="
-            estilo.getEstilo.densidadFinal.min +
-            ' - ' +
-            estilo.getEstilo.densidadFinal.max
-          "
+          :rules="[(val) => (val && val > 0) || 'Ingrese Densidad Final']"
+          markers
+          :marker-labels="arrayDF"
+          :readonly="!editar"
         />
       </q-card-section>
 
-      <q-card-section class="row">
-        <q-input
-          v-model.number="receta.getReceta.ibuObjetivo"
-          type="number"
-          label="IBU objetivo"
-          dense
+      <q-card-section class="row items-end">
+        <q-slider
+          v-model="receta.getReceta.ibuObjetivo"
+          :min="estilo.getEstilo.ibu.min"
+          :max="estilo.getEstilo.ibu.max"
+          :step="1"
+          label
+          :label-value="receta.getReceta.ibuObjetivo + 'IBUs'"
+          label-always
+          color="green"
           class="col q-mr-xl"
-          suffix="IBUs"
-          :hint="estilo.getEstilo.ibu.min + ' - ' + estilo.getEstilo.ibu.max"
+          :rules="[(val) => (val && val > 0) || 'Ingrese IBUs']"
+          markers
+          :marker-labels="ArrayIBU"
+          :readonly="!editar"
         />
+        <!-- Estimado -->
         <q-input
           v-model.number="receta.getReceta.srmObjetivo"
           type="text"
@@ -90,7 +119,7 @@
         />
       </q-card-section>
 
-      <q-card-section class="row">
+      <q-card-section class="row items-end">
         <!-- Estimado -->
         <q-input
           v-model.number="receta.getReceta.abvEstimado"
@@ -111,26 +140,40 @@
           class="col"
           suffix="%"
           readonly
+          hint="Dependerá de la levadura utilizda entre otros"
         />
       </q-card-section>
 
-      <q-card-section class="row">
-        <q-input
-          v-model.number="receta.getReceta.carbonatacionObjetivo"
-          type="number"
-          label="Carbonatación Objetivo"
-          dense
+      <q-card-section class="row items-end">
+        <q-slider
+          v-model="receta.getReceta.carbonatacionObjetivo"
+          :min="1"
+          :max="4"
+          :step="0.1"
+          label
+          :label-value="receta.getReceta.carbonatacionObjetivo + ' Vol CO2'"
+          label-always
+          color="pink"
           class="col q-mr-xl"
-          suffix="°GL"
-          :hint="estilo.getEstilo.carb.min + ' - ' + estilo.getEstilo.carb.max"
+          :rules="[(val) => (val && val > 0) || 'Ingrese carbonatación']"
+          markers
+          :marker-labels="arrayCarb"
+          :readonly="!editar"
         />
-        <q-input
-          v-model.number="receta.getReceta.empaste"
-          type="number"
-          label="Empaste"
-          dense
-          class="col"
-          :suffix="receta.getReceta.empaste + ': 1'"
+        <q-slider
+          v-model="receta.getReceta.empaste"
+          :min="1"
+          :max="4"
+          :step="0.1"
+          label
+          :label-value="receta.getReceta.empaste + ' :1'"
+          label-always
+          color="teal"
+          class="col q-mr-xl"
+          :rules="[(val) => (val && val > 0) || 'Ingrese Empaste']"
+          markers
+          :marker-labels="arrayEmpaste"
+          :readonly="!editar"
         />
       </q-card-section>
     </q-expansion-item>
@@ -140,7 +183,7 @@
 import { useConfig } from "src/stores/useConfig";
 import { useEstilos } from "src/stores/useEstilos";
 import { useRecetas } from "src/stores/useRecetas";
-import { ref, computed } from "vue";
+import { ref, computed, defineProps } from "vue";
 
 const estilo = useEstilos();
 const receta = useRecetas();
@@ -165,4 +208,74 @@ const atenuacionEstimada = computed(() => {
   ).toFixed(1);
 });
 receta.getReceta.atenuacionEstimada = atenuacionEstimada;
+
+const arrayDI = [
+  {
+    value: estilo.getEstilo.densidadInicial.min,
+    label: estilo.getEstilo.densidadInicial.min,
+  },
+  {
+    value: estilo.getEstilo.densidadInicial.max,
+    label: estilo.getEstilo.densidadInicial.max,
+  },
+];
+
+const arrayDF = [
+  {
+    value: estilo.getEstilo.densidadFinal.min,
+    label: estilo.getEstilo.densidadFinal.min,
+  },
+  {
+    value: estilo.getEstilo.densidadFinal.max,
+    label: estilo.getEstilo.densidadFinal.max,
+  },
+];
+
+const ArrayIBU = [
+  {
+    value: estilo.getEstilo.ibu.min,
+    label: estilo.getEstilo.ibu.min,
+  },
+  {
+    value: estilo.getEstilo.ibu.max,
+    label: estilo.getEstilo.ibu.max,
+  },
+];
+
+const arrayEmpaste = [
+  {
+    value: 1,
+    label: "1",
+  },
+  {
+    value: 4,
+    label: "4",
+  },
+];
+
+const arrayCarb = [
+  {
+    value: 1,
+    label: "1",
+  },
+  {
+    value: 4,
+    label: "4",
+  },
+];
+
+const arrayagua = [
+  {
+    value: config.getConfig.volumenElaboracion.min,
+    label: config.getConfig.volumenElaboracion.min,
+  },
+  {
+    value: config.getConfig.volumenElaboracion.max,
+    label: config.getConfig.volumenElaboracion.max,
+  },
+];
+
+const props = defineProps({
+  editar: Boolean,
+});
 </script>

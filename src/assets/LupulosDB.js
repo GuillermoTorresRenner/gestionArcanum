@@ -1,12 +1,3 @@
-<template>
-  <q-btn color="primary" icon="check" label="cargar items" @click="cargar()" />
-</template>
-
-<script setup>
-import { db } from "src/boot/firebase";
-import { defineComponent } from "vue";
-import { setDoc, doc } from "firebase/firestore";
-import { nanoid } from "nanoid";
 const lupulos = [
   {
     nombre: "Agnus",
@@ -400,11 +391,3 @@ const lupulos = [
     stock: 0,
   },
 ];
-
-const cargar = async () => {
-  lupulos.forEach((item) => {
-    item.id = nanoid();
-    setDoc(doc(db, "lupulos", item.id), item);
-  });
-};
-</script>

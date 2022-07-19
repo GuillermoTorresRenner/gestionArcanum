@@ -6,16 +6,57 @@
       </div>
     </q-card-section>
     <q-expansion-item expand-separator icon="ion-water">
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
-
-      <q-card-section class="row"> </q-card-section>
+      <q-card-section class="row"
+        ><h4 class="text-primary">
+          Cantidad Total: {{ aguaTotal }} Litros de agua
+        </h4>
+      </q-card-section>
+      <q-separator white />
+      <q-card-section>
+        <p>Volumen Batch = {{ receta.getReceta.volumenBatch }} litros</p>
+        <hr />
+        <p>
+          Volumen absorbido por granos =
+          {{ aguaGranos }} litros
+        </p>
+        <hr />
+        <p>
+          Volumen pérdida elaboración =
+          {{ config.getConfig.agua.perdidaElaboracion }} litros
+        </p>
+        <hr />
+        <p>
+          Volumen pérdida por evaporación =
+          {{ config.getConfig.agua.perdidaEvaporacion }} litros
+        </p>
+      </q-card-section>
     </q-expansion-item>
   </q-card>
 </template>
-<script setup></script>
+<script setup>
+import RecetasPersonalesVue from "src/pages/RecetasPersonales.vue";
+import { computed } from "vue";
+
+import { useConfig } from "../../stores/useConfig";
+import { useRecetas } from "../../stores/useRecetas";
+
+const receta = useRecetas();
+const config = useConfig();
+const aguaGranos = computed(() => {
+  var totalGranos = 0;
+  receta.getReceta.fermentables.forEach((f) => {
+    totalGranos += f.cantidad;
+  });
+  return totalGranos;
+});
+
+const aguaTotal = computed(() => {
+  return (
+    receta.getReceta.volumenBatch +
+    config.getConfig.agua.perdidaElaboracion +
+    config.getConfig.agua.perdidaEvaporacion +
+    parseFloat(aguaGranos.value)
+  );
+});
+receta.getReceta.agua = aguaTotal.value;
+</script>

@@ -245,11 +245,11 @@ const tablaEstilos = [
 
 const tablaRecetas = [
   {
-    name: "id",
-    align: "center",
-    label: "ID",
-    field: "id",
+    name: "fechaCreacion",
+    label: "Fecha de Creación",
+    field: "fechaCreacion",
     sortable: true,
+    align: "center",
   },
   {
     name: "nombre",
@@ -318,6 +318,13 @@ const tablaListaLupulos = [
     name: "nombre",
     label: "Nombre Fermentable",
     field: "nombre",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "notas",
+    label: "Notas",
+    field: "notas",
     sortable: true,
     align: "center",
   },
@@ -410,6 +417,126 @@ const tablaFermentablesEnReceta = [
   },
 ];
 
+const tablaListaAuxiliares = [
+  {
+    name: "nombre",
+    label: "Nombre Auxiliar",
+    field: "nombre",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "tipo",
+    label: "Tipo",
+    field: "tipo",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "uso",
+    label: "Uso",
+    field: "uso",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "notas",
+    label: "Notas",
+    field: "notas",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "proporcion",
+    label: "Proporcion (g/l)",
+    field: "proporcion",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "cantidad",
+    label: "Cantidad (g)",
+    field: "cantidad",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "momentoAgregado",
+    label: "Momento agregado",
+    field: "momentoAgregado",
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "accion",
+    label: "Acción",
+    field: "accion",
+    align: "center",
+  },
+];
+
+const tablaListaLevaduras = [
+  {
+    name: "nombre",
+    label: "Nombre Auxiliar",
+    field: "nombre",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "tipo",
+    label: "Tipo",
+    field: "tipo",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "laboratorio",
+    label: "Laboratorio",
+    field: "laboratorio",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "atenuacion",
+    label: "Atenuacion",
+    field: "atenuacion",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "floculacion",
+    label: "Floculación",
+    field: "floculacion",
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "notas",
+    label: "Notas",
+    field: "notas",
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "cantidad",
+    label: "Cantidad (g)",
+    field: "cantidad",
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "accion",
+    label: "Acción",
+    field: "accion",
+    align: "center",
+  },
+];
+
 export {
   tablaFermentables,
   tablaLupulos,
@@ -420,4 +547,6 @@ export {
   tablaListaFermentables,
   tablaFermentablesEnReceta,
   tablaListaLupulos,
+  tablaListaAuxiliares,
+  tablaListaLevaduras,
 };

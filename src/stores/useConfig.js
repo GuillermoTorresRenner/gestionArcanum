@@ -21,6 +21,12 @@ export const useConfig = defineStore("config", {
       },
       agua: {
         perdidaEvaporacion: 0,
+        perdidaElaboracion: 0,
+        absorcionGranos: 0,
+      },
+      volumenElaboracion: {
+        min: 0,
+        max: 0,
       },
     },
   }),

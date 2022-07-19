@@ -9,13 +9,16 @@
       <q-card-section>
         <div class="row justify-center">
           <strong class="text-purple text-center text-h6 q-mr-md">
-            Puntos de Densidad Receta: {{ puntosDensidad }}
+            Pts Densidad: {{ puntosDensidad }}
           </strong>
           <strong class="text-pink text-center text-h6 q-mr-md">
             Color: {{ colorCerveza }} SRM
           </strong>
-          <strong class="text-warning text-center text-h6">
-            Porcentaje Total de Fermentables: {{ porcentajeTotal }} %
+          <strong class="text-warning text-center text-h6 q-mr-md">
+            %Fermentables: {{ porcentajeTotal }} %
+          </strong>
+          <strong class="text-white text-center text-h6">
+            cantidad Total: {{ cantidadTotal }} Kg
           </strong>
         </div>
       </q-card-section>
@@ -27,6 +30,7 @@
           row-key="nombre"
           binary-state-sort
           :filter="filter"
+          v-if="porcentajeTotal < 100"
         >
           <template v-slot:top-right>
             <q-input
@@ -55,7 +59,7 @@
               <q-td key="porcentajeReceta" :props="props">
                 {{ props.row.porcentajeReceta }}
                 <q-popup-edit
-                  v-model="props.row.porcentajeReceta"
+                  v-model.number="props.row.porcentajeReceta"
                   title="% Receta"
                   buttons
                   v-slot="scope"
@@ -69,12 +73,13 @@
                 </q-popup-edit>
               </q-td>
               <q-td key="cantidad" :props="props">{{
-                (props.row.cantidad =
+                (props.row.cantidad = (
                   (puntosDensidad /
                     (config.getConfig.eficiencia.actual *
                       props.row.porcentajeExtraccion *
                       3.84)) *
-                  props.row.porcentajeReceta).toFixed(2)
+                  props.row.porcentajeReceta
+                ).toFixed(2))
               }}</q-td>
               <q-td key="accion" :props="props"
                 ><q-btn
@@ -100,6 +105,7 @@
               color="negative"
               icon="ion-trash"
               @click="eliminar(props.row)"
+              :disable="!editar"
               dense
             />
           </template>
@@ -111,7 +117,7 @@
 
 <script setup>
 import { useFermentables } from "src/stores/useFermentables";
-import { computed, ref } from "vue";
+import { computed, ref, defineProps } from "vue";
 import TablaGeneral from "../TablaGeneral.vue";
 
 import { useRecetas } from "src/stores/useRecetas";
@@ -120,13 +126,7 @@ import { tablaFermentablesEnReceta } from "../../composables/useTablesColumns";
 import { useConfig } from "src/stores/useConfig";
 import { useQuasar } from "quasar";
 const $q = useQuasar();
-const fermentableEnReceta = ref({
-  nombre: "",
-  color: 0,
-  porcentajeExtraccion: 0,
-  porcentajeEnReceta: 0,
-  cantidad: 0,
-});
+
 const listaFermentables = ref([]);
 
 const ferm = useFermentables();
@@ -143,6 +143,7 @@ function eliminar(registro) {
 }
 function seleccionar(registro) {
   if (porcentajeTotal.value + registro.porcentajeReceta <= 100) {
+    registro.cantidad = parseFloat(registro.cantidad);
     receta.getReceta.fermentables.push(registro);
   } else {
     $q.notify({
@@ -160,13 +161,13 @@ const puntosDensidad = computed(() => {
   );
 });
 
-const cantidadFermentable = computed(() => {
-  return (
-    puntosDensidad.value /
-    (config.getConfig.eficiencia *
-      ferm.getFermentable.porcentajeExtraccion *
-      3.84)
-  );
+const cantidadTotal = computed(() => {
+  let total = 0;
+  receta.getReceta.fermentables.forEach((f) => {
+    total += f.cantidad;
+  });
+
+  return total;
 });
 
 const porcentajeTotal = computed(() => {
@@ -177,7 +178,6 @@ const porcentajeTotal = computed(() => {
 
   return porc;
 });
-fermentableEnReceta.value.cantidad = cantidadFermentable;
 
 const colorCerveza = computed(() => {
   let mcu = 0;
@@ -185,9 +185,12 @@ const colorCerveza = computed(() => {
   receta.getReceta.fermentables.forEach((f) => {
     mcu += (f.cantidad * f.color * 8.46) / receta.getReceta.volumenBatch;
   });
-  console.log(mcu);
+
   srm = 1.5 * Math.pow(mcu, 0.7);
   return srm.toFixed(0);
 });
 receta.getReceta.srmEstimado = colorCerveza;
+const props = defineProps({
+  editar: Boolean,
+});
 </script>

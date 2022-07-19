@@ -9,6 +9,7 @@
           label="Estilo Base"
           @change="estilo.setEstiloByName(receta.getReceta.estiloBase)"
           class="col justify-end"
+          :readonly="!editar"
         />
 
         <div class="text-subtitle1 col q-ml-md justify-end">
@@ -81,7 +82,7 @@
 <script setup>
 import { useEstilos } from "../../stores/useEstilos";
 import { useRecetas } from "../../stores/useRecetas";
-import { computed, ref } from "vue";
+import { computed, ref, defineProps } from "vue";
 import DialogInfo from "src/components/DialogInfo.vue";
 
 const estilo = useEstilos();
@@ -108,5 +109,8 @@ function verInfo(seccion) {
 }
 const bloquearBtnVerInfo = computed(() => {
   return receta.getReceta.estiloBase === "" ? true : false;
+});
+const props = defineProps({
+  editar: Boolean,
 });
 </script>

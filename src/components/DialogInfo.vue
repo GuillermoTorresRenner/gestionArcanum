@@ -6,7 +6,7 @@
       </q-card-section>
       <q-card-section class="row justify-center q-mx-xl">
         <h5>{{ titulo }}</h5>
-        <span>{{ texto }}</span>
+        <p>{{ texto }}</p>
       </q-card-section>
       <q-card-actions align="center">
         <q-btn color="negative" icon="cancel" size="md" v-close-popup />

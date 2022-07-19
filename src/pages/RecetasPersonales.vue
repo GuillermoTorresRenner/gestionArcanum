@@ -10,14 +10,7 @@
         Recetas Personales
       </h4>
     </div>
-    <!-- Dialogo confirmación -->
-    <!-- <DialogSiNo
-      colorIcono="negative"
-      icono="ion-trash"
-      :texto="dialogo.mensaje"
-      v-model="dialogo.estado"
-      :accionAceptar="eliminarRegistro"
-    /> -->
+
     <!-- Tabla de recetas -->
     <TablaGeneral
       :col="col"
@@ -34,11 +27,10 @@
       :cerrarDialogo="cerrarDialogo"
     >
       <template #formuario>
-        <pre>{{ receta.getReceta }}</pre>
         <div class="container">
           <!-- Estilo base de la receta -->
           <div class="row justify-center q-mb-xl">
-            <EstiloBaseEnRenceta />
+            <EstiloBaseEnRenceta :editar="edit" />
           </div>
 
           <!-- ---------- Formulario--------------- -->
@@ -47,18 +39,17 @@
             v-if="estilo.getEstilo.nombre !== ''"
           >
             <!-- Parámetros Fundamentales de la receta -->
-            <ParametroEnReceta />
+            <ParametroEnReceta :editar="edit" />
             <!-- Insumos Fermentables -->
-            <FermentablesEnReceta />
+            <FermentablesEnReceta :editar="edit" />
             <!-- Insumos Lúpulos -->
-            <LupulosEnReceta />
+            <LupulosEnReceta :editar="edit" />
             <!-- Insumos Auxiliares -->
-            <AuxiliaresEnReceta1 />
+            <AuxiliaresEnReceta1 :editar="edit" />
             <!-- Insumos levaduras -->
-            <LevduraEnReceta />
+            <LevduraEnReceta :editar="edit" />
             <!-- Insumos Agua -->
             <AguaEnReceta />
-
             <div class="row justify-center">
               <q-btn
                 icon="ion-save"
@@ -67,6 +58,7 @@
                 flat
                 class="col"
                 size="lg"
+                :disable="bloqueoFermentables || bloqueoLupulos || !edit"
               />
               <q-btn
                 icon="ion-create"
@@ -75,15 +67,27 @@
                 class="col"
                 @click="editar()"
                 size="lg"
+                :disable="edit"
               />
               <q-btn
                 icon="ion-trash"
                 color="negative"
                 flat
                 class="col"
-                @click="dialogoEliminar()"
+                @click="eliminarRegistro()"
                 size="lg"
+                :disable="edit"
               />
+            </div>
+            <div class="row">
+              <strong class="col text-warning q-m-xl" v-if="bloqueoFermentables"
+                >Falta agregar Fermentables</strong
+              >
+            </div>
+            <div class="row">
+              <strong class="col text-green q-m-xl" v-if="bloqueoLupulos"
+                >Falta agregar Lúpulos</strong
+              >
             </div>
           </q-form>
         </div>
@@ -108,11 +112,15 @@ import AuxiliaresEnReceta from "../components/receta/AuxiliaresEnReceta.vue";
 import LevduraEnReceta from "../components/receta/LevduraEnReceta.vue";
 import AguaEnReceta from "../components/receta/AguaEnReceta.vue";
 import AuxiliaresEnReceta1 from "../components/receta/AuxiliaresEnReceta.vue";
+import { useQuasar } from "quasar";
+import { getFechaActual } from "../composables/useFechas";
 
+const $q = useQuasar();
 const col = tablaRecetas;
 const receta = useRecetas();
 const estilo = useEstilos();
 const config = useConfig();
+const edit = ref(false);
 const dialogo = ref({
   mensaje: "",
   estado: "",
@@ -121,17 +129,110 @@ const mostrar = ref(false);
 
 //Metodos
 
-function eliminarRegistro() {}
-function seleccionarReceta(registro) {}
+function eliminarRegistro() {
+  $q.notify({
+    message: `¿Desea Eliminar la receta ${receta.getReceta.nombre}?`,
+    color: "purple",
+    position: "top",
+    icon: "warning",
+    actions: [
+      {
+        label: "Eliminar",
+        icon: "ion-trash",
+        color: "red",
+        handler: () => {
+          receta.getReceta.fechaCreacion = getFechaActual();
+          receta.deleteRecetaInDB();
+          $q.notify({
+            message: "Receta Eliminada",
+            color: "green",
+            position: "bottom",
+            icon: "check",
+          });
+          cerrarDialogo();
+        },
+      },
+      {
+        label: "Cancelar",
+        icon: "cancel",
+        color: "warning",
+        handler: () => {},
+      },
+    ],
+  });
+}
+function seleccionarReceta(registro) {
+  receta.setReceta(registro);
+  mostrar.value = true;
+  edit.value = false;
+}
 function agregarReceta() {
   mostrar.value = true;
+  edit.value = true;
 }
 function cerrarDialogo() {
   mostrar.value = false;
+  edit.value = true;
 
   estilo.resetEstilo();
   receta.resetReceta();
 }
+function editar() {
+  edit.value = true;
+}
 
-function guardarRegistro() {}
+const bloqueoFermentables = computed(() => {
+  let maltas = 0;
+  if (receta.getReceta.fermentables.length > 0) {
+    receta.getReceta.fermentables.forEach((f) => {
+      maltas += f.porcentajeReceta;
+    });
+  }
+
+  return maltas < 100 ? true : false;
+});
+
+const bloqueoLupulos = computed(() => {
+  let lupulos = 0;
+  receta.getReceta.lupulos.forEach((l) => {
+    lupulos += l.aporteIbu;
+  });
+  return lupulos !== receta.getReceta.ibuObjetivo ||
+    receta.getReceta.ibuObjetivo == 0
+    ? true
+    : false;
+});
+
+function guardarRegistro() {
+  $q.notify({
+    message: `¿Desea guardar la receta ${receta.getReceta.nombre}?`,
+    color: "purple",
+    position: "top",
+    icon: "warning",
+    actions: [
+      {
+        label: "Guardar",
+        icon: "ion-save",
+        color: "green",
+        handler: () => {
+          receta.getReceta.fechaCreacion = getFechaActual();
+          receta.saveRecetaInDB();
+          $q.notify({
+            message: "Receta Guardada",
+            color: "green",
+            position: "bottom",
+            icon: "check",
+          });
+          cerrarDialogo();
+        },
+      },
+      {
+        label: "Cancelar",
+        icon: "cancel",
+        color: "red",
+        handler: () => {},
+      },
+    ],
+  });
+}
 </script>

@@ -13,6 +13,7 @@ import { useAuxiliares } from "./stores/useAuxiliares";
 import { onSnapshot, collection } from "@firebase/firestore";
 import { db } from "./boot/firebase";
 import { useConfig } from "./stores/useConfig";
+import { useRecetas } from "./stores/useRecetas";
 
 const $q = useQuasar();
 $q.dark.set(true);
@@ -22,6 +23,7 @@ const hop = useLupulos();
 const yeast = useLevaduras();
 const aux = useAuxiliares();
 const config = useConfig();
+const recetas = useRecetas();
 
 onMounted(() => {
   const realTimeEstilos = onSnapshot(collection(db, "estilos"), (cambios) => {
@@ -73,6 +75,14 @@ onMounted(() => {
     cambios.docChanges().forEach((c) => {
       if (c.type === "added") {
         config.setConfig(c.doc.data());
+      }
+    });
+  });
+
+  const realTimeRecetas = onSnapshot(collection(db, "recetas"), (cambios) => {
+    cambios.docChanges().forEach((c) => {
+      if (c.type === "added") {
+        recetas.addRecetaToRecetas(c.doc.data());
       }
     });
   });

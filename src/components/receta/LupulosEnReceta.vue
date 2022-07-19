@@ -20,6 +20,7 @@
           row-key="nombre"
           binary-state-sort
           :filter="filter"
+          v-if="receta.getReceta.ibuObjetivo > ibuTotal"
         >
           <template v-slot:top-right>
             <q-input
@@ -39,6 +40,14 @@
               <q-td key="nombre" :props="props">
                 {{ props.row.nombre }}
               </q-td>
+              <q-td key="notas" :props="props">
+                <q-btn
+                  color="primary"
+                  icon="ion-eye"
+                  @click="verNotas(props.row)"
+                  v-if="props.row.notas !== ''"
+                />
+              </q-td>
               <q-td key="porcentajeAA" :props="props">
                 {{ props.row.porcentajeAA }}
               </q-td>
@@ -53,8 +62,6 @@
                   <q-select
                     v-model="scope.value"
                     :options="['flor', 'pellet']"
-                    label="Formato"
-                    filled
                   />
                 </q-popup-edit>
               </q-td>
@@ -125,28 +132,47 @@
               color="negative"
               icon="ion-trash"
               @click="eliminar(props.row)"
+              :disable="!editar"
               dense
+            />
+          </template>
+          <template #body-cell-notas="props">
+            <q-btn
+              color="primary"
+              icon="ion-eye"
+              @click="verNotas(props.row)"
             />
           </template>
         </q-table>
       </q-card-section>
     </q-expansion-item>
   </q-card>
+  <DialogInfo
+    v-model="info"
+    icono="workspaces"
+    colorIcono="green"
+    titulo="Notas sobre Lúpulos"
+    :texto="notasLupulos"
+  />
 </template>
 <script setup>
 import { useQuasar } from "quasar";
 import { tablaListaLupulos } from "src/composables/useTablesColumns";
 import { useLupulos } from "src/stores/useLupulos";
 import { useRecetas } from "src/stores/useRecetas";
-import { computed, ref } from "vue";
+import { computed, ref, defineProps } from "vue";
+import DialogInfo from "../DialogInfo.vue";
 const $q = useQuasar();
 const filter = ref("");
 const lupulo = useLupulos();
 const receta = useRecetas();
 const col = tablaListaLupulos;
+const info = ref(false);
+const notasLupulos = ref("");
 function seleccionar(registro) {
   if (ibuTotal.value + registro.aporteIbu <= receta.getReceta.ibuObjetivo) {
-    receta.getReceta.lupulos.push(registro);
+    var copia = Object.assign({}, registro);
+    receta.getReceta.lupulos.push(copia);
   } else {
     $q.notify({
       message: `Revisar El aporte de IBU (max) ${
@@ -228,6 +254,14 @@ function porcUtilizacion(formato, tiempo) {
 
   return putil;
 }
+
+function verNotas(registro) {
+  info.value = true;
+  notasLupulos.value = registro.notas;
+}
+const props = defineProps({
+  editar: Boolean,
+});
 </script>
 <!-- IBU= (aporteIBU*volumenBatch*FC*10)/(%AA*30)
 

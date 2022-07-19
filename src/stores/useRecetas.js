@@ -16,22 +16,19 @@ export const useRecetas = defineStore("recetas", {
       id: "",
       nombre: "",
       estiloBase: "",
-      volumenBatch: 0,
+      volumenBatch: 65,
       densidadInicialObjetivo: 0,
       densidadFinalObjetivo: 0,
       ibuObjetivo: 0,
       srmEstimado: 0,
       abvEstimado: 0,
       carbonatacionObjetivo: 0,
-
       fermentables: [],
       lupulos: [],
       levadura: [],
-      agua: [],
+      agua: 0,
       auxiliares: [],
-      otros: [],
-
-      equipoCervecero: {},
+      fechaCreacion: "",
       empaste: 3,
       atenuacionEstimada: 0,
     },
@@ -40,11 +37,9 @@ export const useRecetas = defineStore("recetas", {
   getters: {
     getReceta: (state) => state.receta,
     getRecetas: (state) => state.recetas,
-    getFermentablesEnReceta: (state) => state.receta.fermentables,
   },
   actions: {
-    async saveRecetaInDB(style) {
-      this.receta = style;
+    async saveRecetaInDB() {
       if (this.receta.id === "") {
         this.receta.id = nanoid();
       }
@@ -52,8 +47,8 @@ export const useRecetas = defineStore("recetas", {
       await setDoc(doc(db, "recetas", this.receta.id), this.receta);
     },
     async deleteRecetaInDB() {
-      await deleteDoc(doc(db, "recetas", this.receta.id));
       this.recetas = this.recetas.filter((a) => a.id !== this.receta.id);
+      await deleteDoc(doc(db, "recetas", this.receta.id));
     },
 
     async getRecetasFromDB() {
@@ -87,7 +82,7 @@ export const useRecetas = defineStore("recetas", {
         id: "",
         nombre: "",
         estiloBase: "",
-        volumenBatch: 0,
+        volumenBatch: 65,
         densidadInicialObjetivo: 0,
         densidadFinalObjetivo: 0,
         ibuObjetivo: 0,
@@ -106,9 +101,6 @@ export const useRecetas = defineStore("recetas", {
         empaste: 3,
         atenuacionEstimada: 0,
       };
-    },
-    addFermentableToReceta(ferm) {
-      this.receta.fermentables.push(ferm);
     },
   },
 });
