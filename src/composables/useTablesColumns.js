@@ -275,9 +275,21 @@ const tablaRecetas = [
   },
 
   {
+    name: "pdf",
+    label: "PDF",
+    field: "pdf",
+    align: "center",
+  },
+  {
     name: "seleccionar",
     label: "Seleccionar",
     field: "seleccionar",
+    align: "center",
+  },
+  {
+    name: "clonar",
+    label: "Clonar Receta",
+    field: "clonar",
     align: "center",
   },
 ];

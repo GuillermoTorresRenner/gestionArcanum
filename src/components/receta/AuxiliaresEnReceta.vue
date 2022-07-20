@@ -48,58 +48,44 @@
                 />
               </q-td>
               <q-td key="proporcion" :props="props">
-                {{ props.row.proporcion }}
-                <q-popup-edit
-                  v-model="props.row.proporcion"
-                  title="proporción (g/l)"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-input
-                    type="text"
-                    v-model.number="scope.value"
-                    dense
-                    autofocus
-                  />
-                </q-popup-edit>
+                <q-input
+                  type="text"
+                  v-model.number="props.row.proporcion"
+                  dense
+                />
               </q-td>
               <q-td key="cantidad" :props="props">{{
                 (props.row.cantidad = (
                   props.row.proporcion * receta.getReceta.volumenBatch
                 ).toFixed(1))
               }}</q-td>
-              <q-td key="momentoAgregado" :props="props"
-                >{{ props.row.momentoAgregado }}
-                <q-popup-edit
+              <q-td key="momentoAgregado" :props="props">
+                <q-select
                   v-model="props.row.momentoAgregado"
-                  title="Momento Agregado"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-select
-                    v-model="scope.value"
-                    :options="[
-                      'precalentado',
-                      'maceración',
-                      'cocción',
-                      'refrigeración',
-                      'fermentación',
-                      'maduración',
-                      'clarificación',
-                      'gasificación',
-                      'envasado',
-                      'otro',
-                    ]"
-                    filled
-                  /> </q-popup-edit
-              ></q-td>
+                  :options="[
+                    'precalentado',
+                    'maceración',
+                    'cocción',
+                    'refrigeración',
+                    'fermentación',
+                    'maduración',
+                    'clarificación',
+                    'gasificación',
+                    'envasado',
+                    'otro',
+                  ]"
+                  filled
+                />
+              </q-td>
               <q-td key="accion" :props="props"
                 ><q-btn
                   color="green"
                   icon="check"
                   @click="seleccionar(props.row)"
                   dense
-                  v-if="props.row.cantidad > 0"
+                  v-if="
+                    props.row.cantidad > 0 || props.row.momentoAgregado === ''
+                  "
                   :disable="!editar"
               /></q-td>
             </q-tr>

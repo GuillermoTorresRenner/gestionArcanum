@@ -57,20 +57,12 @@
               </q-td>
 
               <q-td key="cantidad" :props="props">
-                {{ props.row.cantidad }}
-                <q-popup-edit
-                  v-model="props.row.cantidad"
-                  title="cantidad (g)"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-input
-                    type="text"
-                    v-model.number="scope.value"
-                    dense
-                    autofocus
-                  />
-                </q-popup-edit>
+                <q-input
+                  type="text"
+                  v-model.number="props.row.cantidad"
+                  dense
+                  autofocus
+                />
               </q-td>
 
               <q-td key="accion" :props="props"

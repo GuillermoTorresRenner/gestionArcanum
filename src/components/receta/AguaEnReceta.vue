@@ -34,7 +34,6 @@
   </q-card>
 </template>
 <script setup>
-import RecetasPersonalesVue from "src/pages/RecetasPersonales.vue";
 import { computed } from "vue";
 
 import { useConfig } from "../../stores/useConfig";
@@ -45,18 +44,17 @@ const config = useConfig();
 const aguaGranos = computed(() => {
   var totalGranos = 0;
   receta.getReceta.fermentables.forEach((f) => {
-    totalGranos += f.cantidad;
+    totalGranos += parseFloat(f.cantidad);
   });
-  return totalGranos;
+  return parseInt(totalGranos * config.getConfig.agua.absorcionGranos);
 });
 
 const aguaTotal = computed(() => {
-  return (
+  return parseInt(
     receta.getReceta.volumenBatch +
-    config.getConfig.agua.perdidaElaboracion +
-    config.getConfig.agua.perdidaEvaporacion +
-    parseFloat(aguaGranos.value)
+      config.getConfig.agua.perdidaElaboracion +
+      config.getConfig.agua.perdidaEvaporacion +
+      aguaGranos.value
   );
 });
-receta.getReceta.agua = aguaTotal.value;
 </script>

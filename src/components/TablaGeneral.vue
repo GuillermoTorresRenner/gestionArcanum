@@ -52,8 +52,41 @@
             <q-btn
               color="info"
               icon="check"
-              label="Seleccionar"
               @click="seleccionar(props.row)"
+              size="sm"
+              dense
+            />
+          </div>
+          <div class="my-table-details">
+            {{ props.row.details }}
+          </div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-pdf="props">
+        <q-td :props="props">
+          <div>
+            <q-btn
+              color="teal"
+              icon="ion-document"
+              @click="pdf(props.row)"
+              size="sm"
+              dense
+            />
+          </div>
+          <div class="my-table-details">
+            {{ props.row.details }}
+          </div>
+        </q-td>
+      </template>
+
+      <template v-slot:body-cell-clonar="props">
+        <q-td :props="props">
+          <div>
+            <q-btn
+              color="purple"
+              icon="ion-copy"
+              @click="clonar(props.row)"
               size="sm"
               dense
             />
@@ -87,7 +120,9 @@ export default {
     col: Array,
     titulo: String,
     editar: Function,
+    clonar: Function,
     eliminar: Function,
+    pdf: Function,
     seleccionar: Function,
     noData: String,
   },

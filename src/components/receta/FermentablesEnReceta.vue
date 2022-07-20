@@ -57,20 +57,11 @@
                 <div class="text-pre-wrap">{{ props.row.color }}</div>
               </q-td>
               <q-td key="porcentajeReceta" :props="props">
-                {{ props.row.porcentajeReceta }}
-                <q-popup-edit
+                <q-input
+                  type="text"
                   v-model.number="props.row.porcentajeReceta"
-                  title="% Receta"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-input
-                    type="text"
-                    v-model.number="scope.value"
-                    dense
-                    autofocus
-                  />
-                </q-popup-edit>
+                  dense
+                />
               </q-td>
               <q-td key="cantidad" :props="props">{{
                 (props.row.cantidad = (
@@ -145,6 +136,7 @@ function seleccionar(registro) {
   if (porcentajeTotal.value + registro.porcentajeReceta <= 100) {
     registro.cantidad = parseFloat(registro.cantidad);
     receta.getReceta.fermentables.push(registro);
+    S;
   } else {
     $q.notify({
       message: `Revisar porcentajes (max ) ${100 - porcentajeTotal.value}`,
@@ -164,10 +156,10 @@ const puntosDensidad = computed(() => {
 const cantidadTotal = computed(() => {
   let total = 0;
   receta.getReceta.fermentables.forEach((f) => {
-    total += f.cantidad;
+    total += parseFloat(f.cantidad);
   });
 
-  return total;
+  return total.toFixed(2);
 });
 
 const porcentajeTotal = computed(() => {
@@ -189,7 +181,7 @@ const colorCerveza = computed(() => {
   srm = 1.5 * Math.pow(mcu, 0.7);
   return srm.toFixed(0);
 });
-receta.getReceta.srmEstimado = colorCerveza;
+
 const props = defineProps({
   editar: Boolean,
 });

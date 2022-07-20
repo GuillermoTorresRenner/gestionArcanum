@@ -38,7 +38,7 @@
           color="primary"
           class="col q-mr-xl"
           hint="considere 5 L extras por pérdidas de proceso"
-          markers
+          markers8
           :readonly="!editar"
         />
 
@@ -95,7 +95,7 @@
           :max="estilo.getEstilo.ibu.max"
           :step="1"
           label
-          :label-value="receta.getReceta.ibuObjetivo + 'IBUs'"
+          :label-value="receta.getReceta.ibuObjetivo + ' IBUs'"
           label-always
           color="green"
           class="col q-mr-xl"
@@ -106,7 +106,7 @@
         />
         <!-- Estimado -->
         <q-input
-          v-model.number="receta.getReceta.srmObjetivo"
+          v-model.number="colorEstimado"
           type="text"
           label="SRM Estimado"
           dense
@@ -122,7 +122,7 @@
       <q-card-section class="row items-end">
         <!-- Estimado -->
         <q-input
-          v-model.number="receta.getReceta.abvEstimado"
+          v-model.number="abvEstimado"
           type="text"
           label="ABV Estimado"
           dense
@@ -133,7 +133,7 @@
         />
         <!-- Estimado -->
         <q-input
-          v-model.number="receta.getReceta.atenuacionEstimada"
+          v-model.number="atenuacionEstimada"
           type="text"
           label="Atenuación Estimada"
           dense
@@ -207,7 +207,16 @@ const atenuacionEstimada = computed(() => {
     100
   ).toFixed(1);
 });
-receta.getReceta.atenuacionEstimada = atenuacionEstimada;
+const colorEstimado = computed(() => {
+  let mcu = 0;
+  let srm = 0;
+  receta.getReceta.fermentables.forEach((f) => {
+    mcu += (f.cantidad * f.color * 8.46) / receta.getReceta.volumenBatch;
+  });
+
+  srm = 1.5 * Math.pow(mcu, 0.7);
+  return srm.toFixed(0);
+});
 
 const arrayDI = [
   {

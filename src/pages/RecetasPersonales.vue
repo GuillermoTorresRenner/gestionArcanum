@@ -18,6 +18,8 @@
       titulo="Tabla de Estilos de Cerveza"
       noData="Sin Estilos que mostrar"
       :seleccionar="seleccionarReceta"
+      :pdf="getPDF"
+      :clonar="clonarReceta"
     />
 
     <!-- Dialogo CRUD -->
@@ -50,6 +52,16 @@
             <LevduraEnReceta :editar="edit" />
             <!-- Insumos Agua -->
             <AguaEnReceta />
+            <!-- Notas Elaboración -->
+            <div class="row justify-center">
+              <q-input
+                v-model="receta.getReceta.notas"
+                type="textarea"
+                label="Notas de Elaboración"
+                class="col q-mb-xl"
+                :readonly="!edit"
+              />
+            </div>
             <div class="row justify-center">
               <q-btn
                 icon="ion-save"
@@ -114,6 +126,7 @@ import AguaEnReceta from "../components/receta/AguaEnReceta.vue";
 import AuxiliaresEnReceta1 from "../components/receta/AuxiliaresEnReceta.vue";
 import { useQuasar } from "quasar";
 import { getFechaActual } from "../composables/useFechas";
+import { getRecetaPDF } from "../composables/usePDF";
 
 const $q = useQuasar();
 const col = tablaRecetas;
@@ -216,6 +229,82 @@ function guardarRegistro() {
         color: "green",
         handler: () => {
           receta.getReceta.fechaCreacion = getFechaActual();
+          camposCalculados();
+          receta.saveRecetaInDB();
+          $q.notify({
+            message: "Receta Guardada",
+            color: "green",
+            position: "bottom",
+            icon: "check",
+          });
+          cerrarDialogo();
+        },
+      },
+      {
+        label: "Cancelar",
+        icon: "cancel",
+        color: "red",
+        handler: () => {},
+      },
+    ],
+  });
+}
+function getPDF(registro) {
+  receta.setReceta(registro);
+  getRecetaPDF();
+}
+function camposCalculados() {
+  // Color de la cerveza
+  let mcu = 0;
+  let srm = 0;
+  receta.getReceta.fermentables.forEach((f) => {
+    mcu += (f.cantidad * f.color * 8.46) / receta.getReceta.volumenBatch;
+  });
+
+  srm = 1.5 * Math.pow(mcu, 0.7);
+  receta.getReceta.srmEstimado = srm.toFixed(0);
+
+  // Atenuación de la cerveza
+
+  receta.getReceta.atenuacionEstimada = (
+    ((receta.getReceta.densidadInicialObjetivo -
+      receta.getReceta.densidadFinalObjetivo) /
+      (receta.getReceta.densidadInicialObjetivo - 1000)) *
+    100
+  ).toFixed(1);
+
+  // Agua total para receta|
+
+  var totalGranos = 0;
+  var aguaGranos = 0;
+  receta.getReceta.fermentables.forEach((f) => {
+    totalGranos += parseFloat(f.cantidad);
+  });
+  aguaGranos = parseFloat(totalGranos * config.getConfig.agua.absorcionGranos);
+
+  receta.getReceta.agua = parseInt(
+    receta.getReceta.volumenBatch +
+      config.getConfig.agua.perdidaElaboracion +
+      config.getConfig.agua.perdidaEvaporacion +
+      aguaGranos
+  );
+}
+function clonarReceta(registro) {
+  receta.setReceta(registro);
+  $q.notify({
+    message: `¿Desea Clonar la receta ${receta.getReceta.nombre}?`,
+    color: "purple",
+    position: "top",
+    icon: "warning",
+    actions: [
+      {
+        label: "Guardar",
+        icon: "ion-save",
+        color: "green",
+        handler: () => {
+          receta.getReceta.fechaCreacion = getFechaActual();
+          receta.getReceta.nombre = registro.nombre + "copy";
+          receta.receta.id = "";
           receta.saveRecetaInDB();
           $q.notify({
             message: "Receta Guardada",

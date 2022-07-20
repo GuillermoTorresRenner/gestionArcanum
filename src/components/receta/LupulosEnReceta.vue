@@ -52,50 +52,24 @@
                 {{ props.row.porcentajeAA }}
               </q-td>
               <q-td key="formato" :props="props">
-                {{ props.row.formato }}
-                <q-popup-edit
+                <q-select
                   v-model="props.row.formato"
-                  title="Formato"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-select
-                    v-model="scope.value"
-                    :options="['flor', 'pellet']"
-                  />
-                </q-popup-edit>
+                  :options="['flor', 'pellet']"
+                />
               </q-td>
               <q-td key="minsHervor" :props="props">
-                {{ props.row.minsHervor }}
-                <q-popup-edit
+                <q-input
+                  type="text"
                   v-model.number="props.row.minsHervor"
-                  title="Minutos en hervor"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-input
-                    type="text"
-                    v-model.number="scope.value"
-                    dense
-                    autofocus
-                  />
-                </q-popup-edit>
+                  dense
+                />
               </q-td>
               <q-td key="aporteIbu" :props="props">
-                {{ props.row.aporteIbu }}
-                <q-popup-edit
-                  v-model="props.row.aporteIbu"
-                  title="Aporte IBU"
-                  buttons
-                  v-slot="scope"
-                >
-                  <q-input
-                    type="text"
-                    v-model.number="scope.value"
-                    dense
-                    autofocus
-                  />
-                </q-popup-edit>
+                <q-input
+                  type="text"
+                  v-model.number="props.row.aporteIbu"
+                  dense
+                />
               </q-td>
               <q-td key="cantidad" :props="props">{{
                 (props.row.cantidad = (
@@ -107,13 +81,13 @@
                     porcUtilizacion(props.row.formato, props.row.minsHervor))
                 ).toFixed(1))
               }}</q-td>
-              <q-td key="accion" :props="props"
-                ><q-btn
+              <q-td key="accion" :props="props">
+                <q-btn
                   color="green"
                   icon="check"
                   @click="seleccionar(props.row)"
                   dense
-                  v-if="props.row.cantidad > 0"
+                  v-if="props.row.cantidad > 0 && props.row.minsHervor > 0"
               /></q-td>
             </q-tr>
           </template>
