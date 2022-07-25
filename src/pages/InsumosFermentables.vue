@@ -39,18 +39,6 @@
                 id="color"
               />
             </div>
-            <div class="row">
-              <label class="col q-mt-md" for="stock">Stock (Kg)</label>
-              <input
-                type="number"
-                v-model.number="fermentables.stock"
-                step="any"
-                placeholder="Stock"
-                class="bg-dark text-white q-mt-md col"
-                min="0"
-                id="stock"
-              />
-            </div>
 
             <div class="row justify-center">
               <q-btn
@@ -119,7 +107,6 @@ const fermentables = ref({
   nombre: "",
   porcentajeExtraccion: 0,
   color: 0,
-  stock: 0,
   id: "",
 });
 const $q = useQuasar();

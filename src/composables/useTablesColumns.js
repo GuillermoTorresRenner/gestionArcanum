@@ -27,13 +27,6 @@ const tablaFermentables = [
     sortable: true,
     align: "center",
   },
-  {
-    name: "stock",
-    label: "En Stock(Kg)",
-    field: "stock",
-    sortable: true,
-    align: "center",
-  },
 
   {
     name: "editar",
@@ -77,13 +70,6 @@ const tablaLupulos = [
     field: "notas",
     sortable: true,
     align: "left",
-  },
-  {
-    name: "stock",
-    label: "En Stock(Kg)",
-    field: "stock",
-    sortable: true,
-    align: "center",
   },
 
   {
@@ -138,14 +124,6 @@ const tablaLevaduras = [
   },
 
   {
-    name: "stock",
-    label: "En Stock(Kg)",
-    field: "stock",
-    sortable: true,
-    align: "center",
-  },
-
-  {
     name: "editar",
     label: "Editar",
     field: "editar",
@@ -178,14 +156,6 @@ const tablaAuxiliares = [
     name: "tipo",
     label: "Tipo",
     field: "tipo",
-    sortable: true,
-    align: "center",
-  },
-
-  {
-    name: "stock",
-    label: "En Stock(Kg)",
-    field: "stock",
     sortable: true,
     align: "center",
   },
@@ -549,6 +519,51 @@ const tablaListaLevaduras = [
   },
 ];
 
+const tablaListaStock = [
+  {
+    name: "nombre",
+    label: "Nombre Insumo",
+    field: "nombre",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "tipo",
+    label: "Tipo",
+    field: "tipo",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "cantidad",
+    label: "Cantidad",
+    field: "cantidad",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "unidad",
+    label: "Unidad",
+    field: "unidad",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "fechaActualizacion",
+    label: "Fecha",
+    field: "fechaActualizacion",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "seleccionar",
+    label: "Modificar",
+    field: "seleccionar",
+    sortable: true,
+    align: "center",
+  },
+];
+
 export {
   tablaFermentables,
   tablaLupulos,
@@ -561,4 +576,5 @@ export {
   tablaListaLupulos,
   tablaListaAuxiliares,
   tablaListaLevaduras,
+  tablaListaStock,
 };

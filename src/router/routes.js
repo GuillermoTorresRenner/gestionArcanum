@@ -37,6 +37,10 @@ const routes = [
         path: "/opciones-usuario",
         component: () => import("src/pages/OpcionesUsuario.vue"),
       },
+      {
+        path: "/stock",
+        component: () => import("src/pages/StockInsumos.vue"),
+      },
     ],
   },
 

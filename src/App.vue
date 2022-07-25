@@ -14,6 +14,7 @@ import { onSnapshot, collection } from "@firebase/firestore";
 import { db } from "./boot/firebase";
 import { useConfig } from "./stores/useConfig";
 import { useRecetas } from "./stores/useRecetas";
+import { useStock } from "./stores/useStock";
 
 const $q = useQuasar();
 $q.dark.set(true);
@@ -24,6 +25,7 @@ const yeast = useLevaduras();
 const aux = useAuxiliares();
 const config = useConfig();
 const recetas = useRecetas();
+const stock = useStock();
 
 onMounted(() => {
   const realTimeEstilos = onSnapshot(collection(db, "estilos"), (cambios) => {
@@ -83,6 +85,14 @@ onMounted(() => {
     cambios.docChanges().forEach((c) => {
       if (c.type === "added") {
         recetas.addRecetaToRecetas(c.doc.data());
+      }
+    });
+  });
+
+  const realTimeStock = onSnapshot(collection(db, "stock"), (cambios) => {
+    cambios.docChanges().forEach((c) => {
+      if (c.type === "added") {
+        stock.addStockToStocks(c.doc.data());
       }
     });
   });

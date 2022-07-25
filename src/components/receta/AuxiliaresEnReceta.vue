@@ -136,7 +136,7 @@ import { tablaListaAuxiliares } from "src/composables/useTablesColumns";
 import { useAuxiliares } from "src/stores/useAuxiliares";
 import { useRecetas } from "src/stores/useRecetas";
 import DialogInfo from "../DialogInfo.vue";
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 const $q = useQuasar();
 const filter = ref("");
 const auxiliares = useAuxiliares();

@@ -15,7 +15,6 @@ export const useFermentables = defineStore("fermentables", {
   state: () => ({
     fermentable: {},
     fermentables: [],
-    fermentableEnReceta: {},
   }),
   getters: {
     getFermentable: (state) => state.fermentable,

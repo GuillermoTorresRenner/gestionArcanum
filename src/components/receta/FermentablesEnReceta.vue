@@ -108,7 +108,7 @@
 
 <script setup>
 import { useFermentables } from "src/stores/useFermentables";
-import { computed, ref, defineProps } from "vue";
+import { computed, ref } from "vue";
 import TablaGeneral from "../TablaGeneral.vue";
 
 import { useRecetas } from "src/stores/useRecetas";

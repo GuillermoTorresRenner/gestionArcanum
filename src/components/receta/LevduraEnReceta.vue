@@ -120,7 +120,7 @@ import { useQuasar } from "quasar";
 import { tablaListaLevaduras } from "src/composables/useTablesColumns";
 import { useRecetas } from "src/stores/useRecetas";
 import DialogInfo from "../DialogInfo.vue";
-import { ref, defineProps } from "vue";
+import { ref } from "vue";
 import { useLevaduras } from "src/stores/useLevaduras";
 const $q = useQuasar();
 const filter = ref("");

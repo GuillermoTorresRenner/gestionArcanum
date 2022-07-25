@@ -134,7 +134,7 @@ import { useQuasar } from "quasar";
 import { tablaListaLupulos } from "src/composables/useTablesColumns";
 import { useLupulos } from "src/stores/useLupulos";
 import { useRecetas } from "src/stores/useRecetas";
-import { computed, ref, defineProps } from "vue";
+import { computed, ref} from "vue";
 import DialogInfo from "../DialogInfo.vue";
 const $q = useQuasar();
 const filter = ref("");

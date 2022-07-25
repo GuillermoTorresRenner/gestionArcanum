@@ -82,7 +82,7 @@
 <script setup>
 import { useEstilos } from "../../stores/useEstilos";
 import { useRecetas } from "../../stores/useRecetas";
-import { computed, ref, defineProps } from "vue";
+import { computed, ref } from "vue";
 import DialogInfo from "src/components/DialogInfo.vue";
 
 const estilo = useEstilos();

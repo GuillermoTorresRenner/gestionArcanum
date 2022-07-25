@@ -77,14 +77,7 @@
                 class="col"
               />
             </div>
-            <div class="row">
-              <q-input
-                v-model.number="levadura.stock"
-                type="number"
-                label="Stock"
-                class="col"
-              />
-            </div>
+
             <div class="row justify-center">
               <q-btn
                 type="submit"
@@ -166,7 +159,6 @@ const levadura = ref({
   atenuacion: 0,
   tempMax: 0,
   tempMin: 0,
-  stock: 0,
 });
 
 //Definición de funciones
@@ -237,5 +229,4 @@ const validarBtn = computed(() => {
     ? false
     : true;
 });
-
 </script>

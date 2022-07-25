@@ -37,13 +37,6 @@
                 label="Uso"
                 class="col q-mr-md"
               />
-
-              <q-input
-                v-model.number="auxiliar.stock"
-                type="number"
-                label="stock"
-                class="col justify-center"
-              />
             </div>
             <div class="row">
               <q-input
@@ -129,7 +122,6 @@ const auxiliar = ref({
   tipo: "",
   uso: "",
   notas: "",
-  stock: 0,
 });
 
 //Definición de funciones

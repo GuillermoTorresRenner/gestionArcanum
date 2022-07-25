@@ -36,18 +36,7 @@
                 id="%AA"
               />
             </div>
-            <div class="row">
-              <label class="col q-mt-md" for="stock">Stock (g)</label>
-              <input
-                type="number"
-                v-model.number="lupulo.stock"
-                step="any"
-                placeholder="Stock"
-                class="bg-dark text-white q-mt-md col"
-                min="0"
-                id="stock"
-              />
-            </div>
+
             <div class="row">
               <q-input
                 v-model="lupulo.notas"
@@ -129,7 +118,6 @@ const agregar = ref(false);
 const lupulo = ref({
   nombre: "",
   porcentajeAA: 0,
-  stock: 0,
   id: "",
   notas: "",
 });

@@ -183,7 +183,7 @@
 import { useConfig } from "src/stores/useConfig";
 import { useEstilos } from "src/stores/useEstilos";
 import { useRecetas } from "src/stores/useRecetas";
-import { ref, computed, defineProps } from "vue";
+import { ref, computed } from "vue";
 
 const estilo = useEstilos();
 const receta = useRecetas();
