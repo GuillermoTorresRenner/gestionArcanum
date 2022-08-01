@@ -10,13 +10,14 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { nanoid } from "nanoid";
+import { getFechaActual } from "src/composables/useFechas";
 export const useStock = defineStore("stock", {
   state: () => ({
     stock: {
       id: "",
       nombre: "",
       tipo: "",
-      fechaActualizacion: 65,
+      fechaActualizacion: "",
       cantidad: 0,
       unidad: "",
     },
@@ -28,9 +29,7 @@ export const useStock = defineStore("stock", {
   },
   actions: {
     async saveStockInDB() {
-      if (this.stock.id === "") {
-        this.stock.id = nanoid();
-      }
+      this.stock.fechaActualizacion = getFechaActual();
 
       await setDoc(doc(db, "stock", this.stock.id), this.stock);
     },

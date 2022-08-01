@@ -10,6 +10,8 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { nanoid } from "nanoid";
+import { useStock } from "./useStock";
+
 export const useAuxiliares = defineStore("auxiliares", {
   state: () => ({
     auxiliar: {},

@@ -41,6 +41,10 @@ const routes = [
         path: "/stock",
         component: () => import("src/pages/StockInsumos.vue"),
       },
+      {
+        path: "/elaboraciones",
+        component: () => import("src/pages/AsistenciaElaboraciones.vue"),
+      },
     ],
   },
 

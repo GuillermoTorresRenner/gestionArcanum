@@ -53,7 +53,6 @@
 <script setup>
 import { useQuasar } from "quasar";
 import TablaGeneral from "src/components/TablaGeneral.vue";
-import { getFechaActual } from "src/composables/useFechas";
 import { tablaListaStock } from "src/composables/useTablesColumns";
 import { useStock } from "src/stores/useStock";
 import { ref, computed } from "vue";
@@ -78,7 +77,6 @@ function modificar(registro) {
 function actualizar() {
   cant.value = 0;
   stock.getStock.cantidad = nuevaCantidad;
-  stock.getStock.fechaActualizacion = getFechaActual();
   stock.saveStockInDB();
   mostrar.value = false;
   $q.notify({

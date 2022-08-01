@@ -212,6 +212,29 @@ const tablaEstilos = [
     align: "center",
   },
 ];
+const tablaEstilosBase = [
+  {
+    name: "nombre",
+    label: "Nombre Estilo",
+    field: "nombre",
+    sortable: true,
+    align: "center",
+  },
+  {
+    name: "tipo",
+    label: "Tipo",
+    field: "tipo",
+    sortable: true,
+    align: "center",
+  },
+
+  {
+    name: "seleccionar",
+    label: "Seleccionar",
+    field: "seleccionar",
+    align: "center",
+  },
+];
 
 const tablaRecetas = [
   {
@@ -577,4 +600,5 @@ export {
   tablaListaAuxiliares,
   tablaListaLevaduras,
   tablaListaStock,
+  tablaEstilosBase,
 };

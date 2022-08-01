@@ -7,7 +7,7 @@
           v-model="receta.getReceta.estiloBase"
           :options="estilo.getEstilos.map((e) => e.nombre)"
           label="Estilo Base"
-          @change="estilo.setEstiloByName(receta.getReceta.estiloBase)"
+          @change="set"
           class="col justify-end"
           :readonly="!editar"
         />
@@ -110,6 +110,10 @@ function verInfo(seccion) {
 const bloquearBtnVerInfo = computed(() => {
   return receta.getReceta.estiloBase === "" ? true : false;
 });
+function set() {
+  estilo.setEstiloByName(receta.getReceta.estiloBase);
+  receta.getReceta.estiloBase = estilo.getEstilo;
+}
 const props = defineProps({
   editar: Boolean,
 });

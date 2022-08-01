@@ -4,7 +4,7 @@ import { useRecetas } from "src/stores/useRecetas";
 
 const receta = useRecetas();
 const estilo = useEstilos();
-estilo.setEstiloByName(receta.getReceta.estiloBase);
+
 const doc = new jsPDF();
 
 function getRecetaPDF() {
@@ -256,7 +256,7 @@ function getRecetaPDF() {
     );
     y += 5;
   });
-
+  estilo.setEstiloByName(receta.getReceta.estiloBase);
   // Notas de Estilo
   var nota = "";
   doc.setFontSize(18);
@@ -288,6 +288,8 @@ function getRecetaPDF() {
 
   // Guardado y descarga
   doc.save(`Receta ${receta.getReceta.nombre} by Arcanum.pdf`);
+  receta.getReceta = null;
+  estilo.getEstilo = null;
 }
 
 export { getRecetaPDF };
