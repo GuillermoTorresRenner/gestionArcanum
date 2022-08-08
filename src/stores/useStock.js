@@ -33,6 +33,20 @@ export const useStock = defineStore("stock", {
 
       await setDoc(doc(db, "stock", this.stock.id), this.stock);
     },
+    async saveNuevoStockInDB() {
+      this.stock.id = nanoid();
+      this.stock.fechaActualizacion = getFechaActual();
+
+      await setDoc(doc(db, "stock", this.stock.id), this.stock);
+      this.stock = {
+        id: "",
+        nombre: "",
+        tipo: "",
+        fechaActualizacion: "",
+        cantidad: 0,
+        unidad: "",
+      };
+    },
     async deleteStockInDB() {
       this.stocks = this.stocks.filter((a) => a.id !== this.stocks.id);
       await deleteDoc(doc(db, "stocks", this.stock.id));

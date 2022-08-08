@@ -241,6 +241,7 @@
       titulo="Tabla de Estilos de Cerveza"
       noData="Sin Estilos que mostrar"
       :seleccionar="seleccionarEstilo"
+      key="nombre"
     />
   </q-page>
 </template>

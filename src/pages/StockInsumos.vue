@@ -1,5 +1,8 @@
 <template>
   <q-page>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]" expand>
+      <q-btn fab icon="ion-add" color="positive" @click="verNuevo = true" />
+    </q-page-sticky>
     <h4 class="text-center text-negative">Stock</h4>
     <div class="q-mx-md">
       <q-toggle v-model="enStock" color="green" label="Sólo en Stock" />
@@ -7,8 +10,8 @@
     <TablaGeneral
       :col="col"
       :rows="filtro"
-      titulo="Tabla de Estilos de Cerveza"
-      noData="Sin Estilos que mostrar"
+      titulo="Tabla de Stock"
+      noData="Sin Stock"
       :seleccionar="modificar"
     />
 
@@ -48,6 +51,50 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <!-- Dialogo para agregar nuevo insumo -->
+
+    <q-dialog persistent v-model="verNuevo">
+      <q-card class="container">
+        <q-card-section class="row justify-center">
+          <q-avatar icon="ion-cloud-upload" size="xl" text-color="white" />
+        </q-card-section>
+        <q-card-section class="row justify-center">
+          <h5 class="text-center">Nuevo insumo</h5>
+        </q-card-section>
+        <q-card-section class="row justify-center q-mx-xl">
+          <q-input
+            v-model.trim="stock.getStock.nombre"
+            type="text"
+            label="Nombre"
+          />
+        </q-card-section>
+        <q-card-section class="row justify-center q-mx-xl">
+          <q-input
+            v-model.trim="stock.getStock.tipo"
+            type="text"
+            label="Tipo"
+          />
+        </q-card-section>
+        <q-card-section class="row justify-center q-mx-xl">
+          <q-select
+            v-model="stock.getStock.unidad"
+            :options="['unidad', 'g', 'Kg', 'L', 'ml']"
+            label="Unidad"
+            filled
+          />
+        </q-card-section>
+        <q-card-actions align="center">
+          <q-btn
+            color="positive"
+            icon="ion-save"
+            size="md"
+            @click="agregarNuevo"
+          />
+          <q-btn color="negative" icon="cancel" size="md" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 <script setup>
@@ -70,6 +117,8 @@ const $q = useQuasar();
 const cant = ref(0);
 const col = tablaListaStock;
 const mostrar = ref(false);
+const verNuevo = ref(false);
+const nuevo = ref({ nombre: "", tipo: "" });
 function modificar(registro) {
   mostrar.value = true;
   stock.setStock(registro);
@@ -82,6 +131,16 @@ function actualizar() {
   $q.notify({
     position: "bottom",
     message: "Stock modificado",
+    icon: "check",
+    color: "green",
+  });
+}
+function agregarNuevo() {
+  stock.saveNuevoStockInDB();
+  verNuevo.value = false;
+  $q.notify({
+    position: "bottom",
+    message: "Insumo Agregado",
     icon: "check",
     color: "green",
   });
